@@ -1,14 +1,11 @@
 import tensorflow as tf
 import numpy as np
-import matplotlib.pyplot as plt
-import matplotlib.gridspec as gridspec
 import os
 
 
 class MnistGanModelTrain(object):
 
 	def __init__(self, model, dataset, name="in MnistGanModelTrain: Not Specified"):
-
 
 		self.D_loss, self.G_loss, self.Q_loss = model.get_losses()
 		self.D_solver, self.G_solver, self.Q_solver = model.get_solvers()
@@ -23,25 +20,25 @@ class MnistGanModelTrain(object):
 	def sample_c(self, m):
 		return np.random.multinomial(1, 10*[0.1], size=m)
 
-	def plot(self, samples):
-		fig = plt.figure(figsize=(4, 4))
-		gs = gridspec.GridSpec(4, 4)
-		gs.update(wspace=0.05, hspace=0.05)
-
-		for i, sample in enumerate(samples):
-			ax = plt.subplot(gs[i])
-			plt.axis('off')
-			ax.set_xticklabels([])
-			ax.set_yticklabels([])
-			ax.set_aspect('equal')
-			plt.imshow(sample.reshape(28, 28), cmap='Greys_r')
-
-		return fig
+	# def plot(self, samples):
+	# 	fig = plt.figure(figsize=(4, 4))
+	# 	gs = gridspec.GridSpec(4, 4)
+	# 	gs.update(wspace=0.05, hspace=0.05)
+	#
+	# 	for i, sample in enumerate(samples):
+	# 		ax = plt.subplot(gs[i])
+	# 		plt.axis('off')
+	# 		ax.set_xticklabels([])
+	# 		ax.set_yticklabels([])
+	# 		ax.set_aspect('equal')
+	# 		plt.imshow(sample.reshape(28, 28), cmap='Greys_r')
+	#
+	# 	return fig
 
 	def log_print(self, val_str):
 		print("Log in " + self.name + ":\t" + val_str)
 
-	def train(self, n_of_epochs, n_of_samples, should_plot=False, batch_size=32):
+	def train(self, n_of_epochs, n_of_samples, should_plot=False, batch_size=50):
 
 		mb_size = batch_size
 		Z_dim = 16
@@ -57,7 +54,7 @@ class MnistGanModelTrain(object):
 		n_of_iter = int(((self.dataset.size()*n_of_epochs)/batch_size))
 		self.log_print("Number of iteration %d" % n_of_iter)
 		for it in range(n_of_iter):
-			if it >= n_of_epochs-1:
+			if it >= n_of_iter-1:
 				generated_samples = []
 				generated_labels = []
 				for k in range(n_of_samples/Z_dim):
@@ -69,12 +66,12 @@ class MnistGanModelTrain(object):
 					generated_labels.append(c_noise)
 
 					samples = sess.run(self.G_sample, feed_dict={self.Z: Z_noise, self.c: c_noise})
-
-					if should_plot:
-						fig = self.plot(samples)
-						plt.savefig('out/{}.png'.format(str(i).zfill(3)), bbox_inches='tight')
-						i += 1
-						plt.close(fig)
+					#
+					# if should_plot:
+					# 	fig = self.plot(samples)
+					# 	plt.savefig('out/{}.png'.format(str(i).zfill(3)), bbox_inches='tight')
+					# 	i += 1
+					# 	plt.close(fig)
 					generated_samples.append(samples)
 				return np.concatenate(generated_samples), np.concatenate(generated_labels)
 

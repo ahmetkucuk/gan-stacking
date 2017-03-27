@@ -39,7 +39,7 @@ small_n_mnist_train_samples = EvaluationDataset(data=data[:small_n_mnist_samples
 
 #LAYER 0
 layer0_model = MnistGanModelTrain(MnistGanModel(), small_n_mnist_for_gen_samples, name="Layer0_Model1")
-layer0_samples, layer0_labels = layer0_model.train(layer0_model_epochs, layer0_model_sample_size, should_plot=False)
+layer0_samples, layer0_labels = layer0_model.train(layer0_model_epochs, layer0_model_sample_size, should_plot=True)
 
 layer0_data_output = EvaluationDataset(data=layer0_samples, labels=layer0_labels)
 
