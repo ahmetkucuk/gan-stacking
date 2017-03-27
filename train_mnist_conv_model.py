@@ -1,10 +1,9 @@
 
-from mnist_conv import MnistConvModel
 import tensorflow as tf
 import time
 import os
 
-MODEL_DIR = os.path.join("/tmp/tfmodels/mnist_cnn", str(int(time.time())))
+# MODEL_DIR = os.path.join("/tmp/tfmodels/mnist_cnn", str(int(time.time())))
 
 
 class MnistConvModelTrain(object):
