@@ -1,11 +1,13 @@
 import tensorflow as tf
 import numpy as np
+import matplotlib.pyplot as plt
+import matplotlib.gridspec as gridspec
 import os
 
 
 class MnistGanModelTrain(object):
 
-	def __init__(self, model, dataset, name="in MnistGanModelTrain: Not Specified"):
+	def __init__(self, model, dataset, name="in_MnistGanModelTrain_Not_Specified"):
 
 		self.D_loss, self.G_loss, self.Q_loss = model.get_losses()
 		self.D_solver, self.G_solver, self.Q_solver = model.get_solvers()
@@ -20,20 +22,20 @@ class MnistGanModelTrain(object):
 	def sample_c(self, m):
 		return np.random.multinomial(1, 10*[0.1], size=m)
 
-	# def plot(self, samples):
-	# 	fig = plt.figure(figsize=(4, 4))
-	# 	gs = gridspec.GridSpec(4, 4)
-	# 	gs.update(wspace=0.05, hspace=0.05)
-	#
-	# 	for i, sample in enumerate(samples):
-	# 		ax = plt.subplot(gs[i])
-	# 		plt.axis('off')
-	# 		ax.set_xticklabels([])
-	# 		ax.set_yticklabels([])
-	# 		ax.set_aspect('equal')
-	# 		plt.imshow(sample.reshape(28, 28), cmap='Greys_r')
-	#
-	# 	return fig
+	def plot(self, samples):
+		fig = plt.figure(figsize=(4, 4))
+		gs = gridspec.GridSpec(4, 4)
+		gs.update(wspace=0.05, hspace=0.05)
+
+		for i, sample in enumerate(samples):
+			ax = plt.subplot(gs[i])
+			plt.axis('off')
+			ax.set_xticklabels([])
+			ax.set_yticklabels([])
+			ax.set_aspect('equal')
+			plt.imshow(sample.reshape(28, 28), cmap='Greys_r')
+
+		return fig
 
 	def log_print(self, val_str):
 		print("Log in " + self.name + ":\t" + val_str)
@@ -66,13 +68,14 @@ class MnistGanModelTrain(object):
 					generated_labels.append(c_noise)
 
 					samples = sess.run(self.G_sample, feed_dict={self.Z: Z_noise, self.c: c_noise})
-					#
-					# if should_plot:
-					# 	fig = self.plot(samples)
-					# 	plt.savefig('out/{}.png'.format(str(i).zfill(3)), bbox_inches='tight')
-					# 	i += 1
-					# 	plt.close(fig)
 					generated_samples.append(samples)
+
+				for index in range(10):
+					samples = generated_samples[index]
+					fig = self.plot(samples)
+					plt.savefig('out/{}_{}.png'.format(self.name, str(index).zfill(3)), bbox_inches='tight')
+					i += 1
+					plt.close(fig)
 				return np.concatenate(generated_samples), np.concatenate(generated_labels)
 
 			X_mb, _ = self.dataset.next_batch(mb_size)
